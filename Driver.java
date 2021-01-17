@@ -9,6 +9,7 @@
 // import
 import javax.swing.JFrame;
 import java.awt.Dimension;
+import javax.swing.JPanel;
 
 // class definition
 public class Driver {
@@ -65,7 +66,6 @@ public class Driver {
 
     private void tick() {
         // code from https://gamedev.stackexchange.com/questions/52841/the-most-efficient-and-accurate-game-loop
-        // TODO: update this and change it so it is my code and not someone else's
 
         now = System.nanoTime();
         delta += (now - before) / ns;
@@ -85,16 +85,15 @@ public class Driver {
     }
 
     /** RENDER **/
-    private JFrame frame;
-
     private void renderInit() {
-        frame = new JFrame(game.name);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        /** Display the window **/
-        frame.setPreferredSize(new Dimension(400, 300));
-        frame.setLocationRelativeTo(null);
-        frame.pack();
-        frame.setVisible(true);
+        // Draw.java contains class which inherits JPanel
+        // Draw overrides JPanel.paint() 
+        JPanel jpanel = new JPanel();
+        game.getContentPane().add(jpanel);
+        game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        game.setPreferredSize(new Dimension(400, 300));
+        game.setLocationRelativeTo(null);
+        game.pack();
+        game.setVisible(true);
     }
 }
