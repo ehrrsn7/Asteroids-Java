@@ -9,10 +9,16 @@
 // import
 import javax.swing.JFrame;
 import java.awt.Dimension;
+import java.awt.Point;
 import javax.swing.JPanel;
+import Game.*;
 
 // class definition
 public class Driver {
+
+    /** Variables **/
+    public static final int screenWidth = 500;
+    public static final int screenHeight = 400;
 
     /** MAIN **/
     public static void main(String[] args) {
@@ -30,7 +36,7 @@ public class Driver {
 
     private void setUpGame() {
         System.out.println("Setting up Game.");
-        game = new Asteroids();
+        game = new Asteroids(windowDimensions);
     }
 
     private void gameLoop() {
@@ -85,13 +91,19 @@ public class Driver {
     }
 
     /** RENDER **/
+
+    public static final Dimension windowDimensions = new Dimension(
+        screenWidth, screenHeight
+    );
+
     private void renderInit() {
         // Draw.java contains class which inherits JPanel
         // Draw overrides JPanel.paint() 
         JPanel jpanel = new JPanel();
+        jpanel.setPreferredSize(windowDimensions);
         game.getContentPane().add(jpanel);
         game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        game.setPreferredSize(new Dimension(400, 300));
+        game.setDimensions(windowDimensions);
         game.setLocationRelativeTo(null);
         game.pack();
         game.setVisible(true);
