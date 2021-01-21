@@ -6,21 +6,31 @@
  * (note that our code is very different, I mainly just used his for reference)
  **********************************/
 
+package Asteroids;
+
 // import
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.Point;
-import javax.swing.JPanel;
-import Game.*;
+import Asteroids.Game.*;
 
 // class definition
 public class Driver {
 
-    /** Variables **/
+    /** Static Constants **/
     public static final int screenWidth = 500;
     public static final int screenHeight = 400;
 
-    /** MAIN **/
+    public static final Dimension windowDimensions = new Dimension
+        (screenWidth, screenHeight);
+    public static final Point screenCenter = new Point
+        (screenWidth/2, screenHeight/2);
+
+    /** Attributes **/
+    private Asteroids game;
+
+    /** Main **/
     public static void main(String[] args) {
         // make an instance of the current class we are in
         Driver d = new Driver();
@@ -31,18 +41,17 @@ public class Driver {
         d.gameLoop();
     }
 
-    /** GAME **/
-    private Asteroids game;
-
+    /** Methods **/
     private void setUpGame() {
         System.out.println("Setting up Game.");
-        game = new Asteroids(windowDimensions);
+        game = new Asteroids();
     }
 
     private void gameLoop() {
         System.out.println("Setting up " + game.name + " game loop.");
         tickInit();
         while (isRunning) tick();
+        System.out.println("Exiting game loop.");
     }
 
     private void setUpWindow() {
@@ -51,12 +60,12 @@ public class Driver {
     }
  
     /** TICK **/
+    public static boolean isRunning = true;
     private long before;
     private long now;
     private double amountOfTicks;
     private double ns;
     private double delta;
-    private boolean isRunning;
     private long timer;
     private int frames;
 
@@ -67,7 +76,6 @@ public class Driver {
         before = System.nanoTime();
         amountOfTicks = 60.0;
         ns = 1000000000 / amountOfTicks;
-        isRunning = true;
     }
 
     private void tick() {
@@ -91,19 +99,12 @@ public class Driver {
     }
 
     /** RENDER **/
-
-    public static final Dimension windowDimensions = new Dimension(
-        screenWidth, screenHeight
-    );
-
     private void renderInit() {
-        // Draw.java contains class which inherits JPanel
-        // Draw overrides JPanel.paint() 
         JPanel jpanel = new JPanel();
         jpanel.setPreferredSize(windowDimensions);
+        game.setPreferredSize(Driver.windowDimensions);
         game.getContentPane().add(jpanel);
         game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        game.setDimensions(windowDimensions);
         game.setLocationRelativeTo(null);
         game.pack();
         game.setVisible(true);

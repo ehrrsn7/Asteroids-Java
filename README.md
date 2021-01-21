@@ -31,7 +31,7 @@ Common Painting Solutions in Java - https://docs.oracle.com/javase/tutorial/uisw
 
 JFrame screen dimensions getter - https://www.tutorialspoint.com/get-jframe-window-size-information-in-java
 
-Bug: don't use setSize()/getSize(), use setPreferredSize() and getPreferredSize(). Why? Honestly, I don't know. - 
+Bug Fix: don't use setSize()/getSize(), use setPreferredSize() and getPreferredSize(). Why? Honestly, I don't know. - 
 https://stackoverflow.com/questions/1783793/java-difference-between-the-setpreferredsize-and-setsize-methods-in-compone#:~:text=setSize%20will%20resize%20the%20component,re%2Dsized%20the%20component%20manually.&text=setSize%20sets%20the%20size%20of%20the%20component.
 
 Dynamic Array: ArrayList syntax - 
