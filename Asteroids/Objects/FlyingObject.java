@@ -3,34 +3,34 @@ package Asteroids.Objects;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Polygon;
 import java.awt.Image;
 import java.awt.Toolkit;
-import Asteroids.Driver;
+
+import Asteroids.Game.*;
 
 public abstract class FlyingObject {
 
     // attributes
-    public String name;
-    protected Image image;
-    protected Point point;
-    protected Point velocity;
-    protected double direction;
-    protected int r; // hitbox radius
-    protected boolean wrap;
-    protected boolean debug;
-
-    // constructor
-    protected FlyingObject() {
-        name        = "Unknown Flying Object";
-        point       = new Point();
-        velocity    = new Point();
-        r           = 0;
-        wrap        = false;
-        debug       = false;
-    }
+    public      String  name        = "Unknown Flying Object";
+    protected   int     r           = 0; // hitbox radius
+    protected   int     deathTimer  = 0;
+    protected   double  direction   = 90;
+    protected   int     rotation    = 90;
+    protected   Point   point       = new Point();
+    protected   Point   velocity    = new Point();
+    protected   Polygon shape       = new Polygon();
+    // protected   Image   image       = new Image();
+    public      boolean alive       = true;
+    protected   boolean wrap        = false;
+    protected   boolean debug       = false;
+    protected   boolean drawHitBox  = false;
 
     // abstract methods
-    public abstract void draw(Graphics graphics);
+    public void draw(Graphics graphics) {
+        drawHitBox(graphics);
+    }
     
     // update
     public void update() {
@@ -42,37 +42,73 @@ public abstract class FlyingObject {
 
         // wrap edges
         wrap();
+
+        // handle death timer
+        if (deathTimer > 0) deathTimer -= 3;
+        else if (deathTimer < 0) alive = false;
     }
 
     // public helper methods
-    public void accelerate() {
-        System.out.println(name + ".accelerate()");
-        velocity.translate(0, -2);
+    public void accelerate(int amount) {
+        if (debug) System.out.println
+            (name + ".accelerate(" + amount + ") -- new v: " + velocity.toString());
+
+        velocity.translate(
+            (int)(amount * Math.cos(Math.toRadians(-rotation))),
+            (int)(amount * Math.sin(Math.toRadians(-rotation)))
+        );
     }
 
-    // protected helper methods
-    protected void importImage(String imageFilname) {
-        image = Toolkit.getDefaultToolkit().getImage(imageFilname);
+    public void drawHitBox(Graphics graphics) {
+        if (drawHitBox) {
+            graphics.setColor(Color.GREEN);
+            graphics.drawArc(point.x, point.y, 1, 1, 0, 360);
+        }
     }
 
+    protected void addRotation(double diff) {   rotation += diff; }
+    protected void addDirection(double diff) {  rotation += diff; }
+
+    // TODO: fix this when implementing image import
+    // // protected helper methods
+    // protected void importImage(String imageFilname) {
+    //     image = Toolkit.getDefaultToolkit().getImage(imageFilname);
+    // }
+
+    // private helper methods
+
+    // wrap
+    private int buffer = r - 10;
     private void wrap() {
-        if (!wrap) return;
-        if (point.x > Driver.screenWidth + r) {
-            point.x = -r;
-            return;
-        }
-        else if (point.x < -r) {
-            point.x = Driver.screenWidth + r;
-            return;
+
+        if (!wrap) return; // quick exit
+
+        // hide wrap off edge of the screen by adding buffer of size: obj.radius
+        buffer = r - 10; // include jframe offset
+
+        // wrap left/right
+        if (point.x > screenDimensions.width + buffer) {
+            point.x = -buffer;
+        } else if (point.x < -buffer) {
+            point.x = screenDimensions.width + buffer;
         }
 
-        if (point.y < -r) {
-            point.y = Driver.screenHeight + r;
-            return;
+        // wrap bottom/top
+        if (point.y < -buffer) {
+            point.y = screenDimensions.height + buffer;
+        } else if (point.y > screenDimensions.height + buffer) {
+            point.y = -buffer;
         }
-        else if (point.y > Driver.screenHeight + r) {
-            point.y = -r;
-            return;
-        }
+    }
+
+    // FlyingObject.screenDimensions and setters
+    protected static Dimension screenDimensions = new Dimension();
+
+    public static void setScreenDimensions(Dimension d) {
+        screenDimensions = d;
+    }
+
+    public static void setScreenDimensions() {
+        screenDimensions = Asteroids.getScreenDimensions();
     }
 }

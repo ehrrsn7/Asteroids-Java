@@ -1,7 +1,7 @@
 
 package Asteroids.Objects.Asteroid;
 
-import Asteroids.Driver;
+import Asteroids.Game.Asteroids;
 import Asteroids.Objects.FlyingObject;
 
 enum positioning {
@@ -19,7 +19,7 @@ public abstract class Asteroid extends FlyingObject {
     
     // constructor
     protected Asteroid() {
-        name = "Unknown-Asteroid";
+        name = "UnknownAsteroid";
         System.out.println(name + " created.");
 
         // wrap
@@ -27,8 +27,8 @@ public abstract class Asteroid extends FlyingObject {
 
         // set random location
         point.setLocation(
-            Driver.windowDimensions.getWidth() * Math.random(),
-            Driver.windowDimensions.getHeight() * Math.random()
+            Asteroids.getScreenDimensions().width * Math.random(),
+            Asteroids.getScreenDimensions().height * Math.random()
         );
 
         // set random velocity angle

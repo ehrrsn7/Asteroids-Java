@@ -4,22 +4,33 @@ package Asteroids.Objects;
 import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.lang.Math;
 
 public class Laser extends FlyingObject {
+
+    // constants
+    public static final int LASER_FIRING_SPEED = 10;
     
     // constructor
-    public Laser(Point pInit, Point vInit) {
+    public Laser(Point pInit, Point vInit, double direction) {
         name = "Laser";
         System.out.println(name + " created.");
-        point.setLocation(pInit);
-        velocity.setLocation(10 * vInit.x, 10 * vInit.y);
-        r = 1;
+        
+        r = 4;
+        deathTimer = 140;
         wrap = true;
+        point.setLocation(pInit);
+        
+        velocity.setLocation(
+            vInit.x + LASER_FIRING_SPEED * Math.cos(Math.toRadians(-direction)),
+            vInit.y + LASER_FIRING_SPEED * Math.sin(Math.toRadians(-direction))
+        );
     }
-
+    
     // methods
     public void draw(Graphics graphics) {
+        super.draw(graphics);
         graphics.setColor(Color.LIGHT_GRAY);
-        graphics.drawArc(point.x, point.y, r, r, 0, 360);
+        graphics.drawOval(point.x, point.y, r, r);
     }
 }
