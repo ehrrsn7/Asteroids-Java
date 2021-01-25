@@ -7,11 +7,12 @@ import java.awt.Color;
 public class AsteroidLarge extends Asteroid {
 
     // constants
-    public static final int ASTEROID_LARGE_SPEED = 5;
+    public static final int ASTEROID_LARGE_SPEED = 15;
 
     // constructor
     public AsteroidLarge() {
-        name = "LargeAsteroid";
+        asteroidCount++;
+        name = "LargeAsteroid" + asteroidCount;
         System.out.println(name + " created.");
         r = 40;
         velocity.setLocation(
@@ -22,10 +23,10 @@ public class AsteroidLarge extends Asteroid {
 
     // methods
     @Override
-    public void draw(Graphics graphics) {
-        super.draw(graphics);
-        // System.out.println(name + ".draw()");
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        if (debug) System.out.println(name + ".paintComponent() [child]\n");
         graphics.setColor(Color.GRAY);
-        graphics.drawArc(point.x, point.y, r, r, 0, 360);
+        graphics.drawOval(point.x, point.y, r, r);
     }
 }

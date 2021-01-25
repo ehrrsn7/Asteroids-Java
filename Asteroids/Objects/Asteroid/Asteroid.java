@@ -1,6 +1,8 @@
 
 package Asteroids.Objects.Asteroid;
 
+import java.awt.Graphics;
+
 import Asteroids.Game.Asteroids;
 import Asteroids.Objects.FlyingObject;
 
@@ -16,6 +18,8 @@ enum whichAsteroid {
 }
 
 public abstract class Asteroid extends FlyingObject {
+
+    public static int asteroidCount = 0;
     
     // constructor
     protected Asteroid() {
@@ -30,7 +34,7 @@ public abstract class Asteroid extends FlyingObject {
             Asteroids.getScreenDimensions().width * Math.random(),
             Asteroids.getScreenDimensions().height * Math.random()
         );
-
+        
         // set random velocity angle
         direction = 360.0 * Math.random();
     }

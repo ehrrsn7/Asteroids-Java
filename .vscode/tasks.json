@@ -1,33 +1,20 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "type": "shell",
-            "command": "msbuild",
-            "args": [
-                "/property:GenerateFullPaths=true",
-                "/t:build",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "group": "build",
-            "presentation": {
-                "reveal": "silent"
-            },
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "type": "java",
-            "label": "java: exportjar:Asteroids-Java",
-            "mainClass": "Driver",
-            "targetPath": "${workspaceFolder}/${workspaceFolderBasename}.jar",
-            "elements": [
-                "${compileOutput}",
-                "${dependencies}"
-            ],
-            "problemMatcher": []
-        }
-    ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "java",
+			"label": "java: exportjar:Asteroids-Java",
+			"mainClass": "Asteroids.Driver",
+			"targetPath": "${workspaceFolder}/${workspaceFolderBasename}.jar",
+			"elements": [
+				"${compileOutput}",
+				"${dependencies}"
+			],
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
 }

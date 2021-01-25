@@ -8,9 +8,11 @@ import java.awt.Polygon;
 import java.awt.Image;
 import java.awt.Toolkit;
 
+import javax.swing.JPanel;
+
 import Asteroids.Game.*;
 
-public abstract class FlyingObject {
+public abstract class FlyingObject extends JPanel {
 
     // attributes
     public      String  name        = "Unknown Flying Object";
@@ -27,15 +29,14 @@ public abstract class FlyingObject {
     protected   boolean debug       = false;
     protected   boolean drawHitBox  = false;
 
-    // abstract methods
-    public void draw(Graphics graphics) {
-        drawHitBox(graphics);
+    protected FlyingObject() {
+        setOpaque(true);
     }
     
     // update
     public void update() {
         if (debug) System.out.print("\n" + name + ".update()");
-        if (debug) System.out.print(" p(" + point.toString() + ") v(" + velocity.toString() + ")");
+        if (debug) System.out.println(" p(" + point.toString() + ") v(" + velocity.toString() + ")");
         
         // move
         point.translate(velocity.x, velocity.y);
@@ -46,6 +47,19 @@ public abstract class FlyingObject {
         // handle death timer
         if (deathTimer > 0) deathTimer -= 3;
         else if (deathTimer < 0) alive = false;
+
+        repaint();
+    }
+
+    // paint
+    @Override
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        if (debug) {
+            System.out.print(name + ".paintComponent(");
+            System.out.print(point.toString());
+            System.out.println(")");
+        }
     }
 
     // public helper methods
@@ -105,10 +119,12 @@ public abstract class FlyingObject {
     protected static Dimension screenDimensions = new Dimension();
 
     public static void setScreenDimensions(Dimension d) {
-        screenDimensions = d;
+        screenDimensions.setSize(d);
+        System.out.println("FlyingObject screenDims updated too; new dims:");
+        System.out.println(screenDimensions.toString());
     }
 
     public static void setScreenDimensions() {
-        screenDimensions = Asteroids.getScreenDimensions();
+        setScreenDimensions(Asteroids.getScreenDimensions());
     }
 }

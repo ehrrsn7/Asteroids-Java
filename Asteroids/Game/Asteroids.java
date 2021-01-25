@@ -13,7 +13,7 @@ package Asteroids.Game;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Color;
+import java.awt.Image;
 import java.awt.BorderLayout;
 
 import java.awt.event.KeyEvent;
@@ -37,8 +37,8 @@ public class Asteroids extends JFrame {
     private static final long serialVersionUID = 1L;
 
     // attributes
-    public  String name = "Asteroids";
-    public  boolean debug = false;
+    public String name = "Asteroids";
+    public boolean debug = true;
 
     // screen Dimensions / key Points
     private static Dimension screenDimensions = new Dimension(
@@ -46,11 +46,11 @@ public class Asteroids extends JFrame {
         Driver.screenHeightInit
     );
 
-    public  static Dimension getScreenDimensions() {
+    public static Dimension getScreenDimensions() {
         return screenDimensions;
     }
 
-    public  static Point getScreenCenter() {
+    public static Point getScreenCenter() {
         return new Point(
             screenDimensions.width/2,
             screenDimensions.height/2
@@ -58,8 +58,7 @@ public class Asteroids extends JFrame {
     }
 
     // screen background
-    private static final Color backgroundColor = Color.BLACK;
-    private static JPanel myBackground = new JPanel();
+    private static JPanel myBackground  = new Background();
 
     // game objects
     private Ship            ship        = new Ship();
@@ -81,10 +80,6 @@ public class Asteroids extends JFrame {
         pack();
         setVisible(true);
 
-        // set up background
-        myBackground.setBackground(backgroundColor);
-        add(myBackground, BorderLayout.CENTER);
-
         // set up Event Handling
 		addComponentListener(new WindowSizeChangeListener());
 		addKeyListener(new MyKeyListener());
@@ -99,7 +94,8 @@ public class Asteroids extends JFrame {
     public void update() {
         if (debug){
             clearTerminalWindow();
-            System.out.println(name + ".update() ");
+            System.out.print(name + ".update() ");
+            System.out.println(Driver.delta);
         }
 
         // update game objects
@@ -107,32 +103,43 @@ public class Asteroids extends JFrame {
         for (Asteroid asteroid : asteroids) asteroid.update();
         for (Laser laser : lasers) laser.update();
 
-        // update screen
-        revalidate();
-        repaint();
-
+        // event handling
+        handleCollisions();
         cleanUpZombies();
+
+        // refresh screen
+        repaint();
+        revalidate();
     }
 
     // draw / display
+    private Image dbImage;
+    private Graphics dbGraphics;
+
     @Override
     public void paint(Graphics graphics) {
-        if (debug) System.out.println(name + ".paint() ");
+        if (debug) System.out.println(name + ".paint()");
 
-        // reset background color
-        // graphics.setColor(backgroundColor);
-        // graphics.fillRect(0, 0, getWidth(), getHeight()); // getWidth()/getHeight() return screen dimensions
+        // draw background
+        graphics.setColor(Background.backgroundColor);
+        graphics.fillRect(0, 0, screenDimensions.width, screenDimensions.height);
+        myBackground.paintComponents(graphics);
 
-        // draw objects
-        ship.draw(graphics);
-        for (Asteroid asteroid : asteroids) asteroid.draw(graphics);
-        for (Laser laser : lasers) laser.draw(graphics);
+        // draw each game object
+        for (Asteroid asteroid : asteroids) asteroid.paintComponent(graphics);
+        for (Laser laser : lasers) laser.paintComponent(graphics);
+        ship.paintComponent(graphics);
     }
+
 
     // private helper methods (sorted by order called)
     private void asteroidBelt(int amount) {
         // create 'amount' of asteroids to add to 'this.asteroids'
-        for (int i = 0; i < amount; i++) asteroids.add(new AsteroidLarge());
+        for (int i = 0; i < amount; i++) {
+            Asteroid newAsteroid = new AsteroidLarge();
+            asteroids.add(newAsteroid);
+            add(newAsteroid, BorderLayout.PAGE_START);
+        }
     }
 
     private void clearTerminalWindow() {
@@ -142,6 +149,28 @@ public class Asteroids extends JFrame {
     }
 
     // handle events
+
+    // handle collisions
+    private void handleCollisions() {
+
+    }
+
+    // remove dead game objects
+    private void cleanUpZombies() {
+        for (Laser laser : lasers) {
+            if (!laser.alive) {
+                lasers.remove(laser);
+                break;
+            }
+        }
+
+        for (Asteroid asteroid : asteroids) {
+            if (!asteroid.alive) {
+                asteroids.remove(asteroid);
+                break;
+            }
+        }
+    }
 
     // key events
     private class MyKeyListener implements KeyListener {
@@ -170,7 +199,9 @@ public class Asteroids extends JFrame {
                     break;
 
                 case 'Q':
-                    quit();
+                    // quit the game (break the game loop)
+                    System.out.println("Asteroids.quit()");
+                    Driver.isRunning = false;
                     break;
 
                 case 'X':
@@ -186,7 +217,10 @@ public class Asteroids extends JFrame {
                     break;
 
                 case ' ':
-                    fireLaser();
+                    // fire laser
+                    Laser newLaser = ship.fire();
+                    lasers.add(newLaser);
+                    add(newLaser);
                     break;
 
                 default:
@@ -216,16 +250,6 @@ public class Asteroids extends JFrame {
         }
     }
 
-    // key events helper methods
-    private void quit() {
-        System.out.println("Asteroids.quit()");
-        Driver.isRunning = false;
-    }
-
-    private void fireLaser() {
-        lasers.add(ship.fire());
-    }
-
     // window (jframe) resize event
     private class WindowSizeChangeListener implements ComponentListener {
 
@@ -239,6 +263,11 @@ public class Asteroids extends JFrame {
         public void componentResized(ComponentEvent e) {
             // TODO Auto-generated method stub
             System.out.println("window resized");
+            System.out.println(" - new 'size' == " + getSize().toString());
+            System.out.println(" - new 'preferredSize' == " + getPreferredSize());
+            screenDimensions.width = (int)(getSize().getWidth());
+            screenDimensions.height = (int)(getSize().getHeight());
+            FlyingObject.setScreenDimensions(screenDimensions);
         }
 
         @Override
@@ -251,23 +280,6 @@ public class Asteroids extends JFrame {
         public void componentShown(ComponentEvent e) {
             // TODO Auto-generated method stub
             System.out.println("window shown");
-        }
-    }
-
-    // remove dead game objects
-    private void cleanUpZombies() {
-        for (Laser laser : lasers) {
-            if (!laser.alive) {
-                lasers.remove(laser);
-                break;
-            }
-        }
-
-        for (Asteroid asteroid : asteroids) {
-            if (!asteroid.alive) {
-                asteroids.remove(asteroid);
-                break;
-            }
         }
     }
 }

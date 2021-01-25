@@ -7,7 +7,9 @@ import java.lang.Math;
 import Asteroids.Game.Asteroids;
 
 public class Ship extends FlyingObject {
-    
+
+    private static final long serialVersionUID = 1L;
+
     // constants
     public static final int SHIP_ACCELERATE_AMOUNT = 3;
 
@@ -23,17 +25,15 @@ public class Ship extends FlyingObject {
         name        = "Ship";
         r           = 50;
         wrap        = true;
-        debug       = false;
-        drawHitBox  = false;
         point.setLocation(Asteroids.getScreenCenter());
     }
 
     public double ax = 0;
     // methods
     @Override
-    public void draw(Graphics graphics) {
-        super.draw(graphics);
-        // System.out.println(name + ".draw() [child]");
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        if (debug) System.out.println(name + ".paintComponent() [child]");
 
         graphics.setColor(Color.WHITE);
         graphics.drawOval(point.x - r/2, point.y - r/2, r, r);

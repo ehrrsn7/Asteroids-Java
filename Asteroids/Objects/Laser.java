@@ -28,8 +28,9 @@ public class Laser extends FlyingObject {
     }
     
     // methods
-    public void draw(Graphics graphics) {
-        super.draw(graphics);
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        System.out.println(name + ".paintComponent()");
         graphics.setColor(Color.LIGHT_GRAY);
         graphics.drawOval(point.x, point.y, r, r);
     }
